@@ -15,6 +15,9 @@ const refs = {
   loadMoreBtn: document.querySelector('.is-hidden'),
 };
 
+
+// console.log(a)
+
 const pictureApi = new PictureApi();
 
 // ##### eventListener and fn for them 
@@ -26,6 +29,7 @@ function onFormSubmit(e) {
   query = e.target.elements.searchQuery.value;
 
   pictureApi.currentPage = 1;
+
   pictureApi
     .getPictures(query)
     .then(data => {
@@ -52,6 +56,8 @@ function onLoadMoreBtnClick() {
   pictureApi.currentPage += 1;
   pictureApi.getPictures().then(data => {
     addMarkupToGallery(data.hits);
+
+    initScroll();
 
     if (pictureApi.currentPage * pictureApi.perPage > data.totalHits) {
       hiddenBtn();
@@ -120,4 +126,13 @@ function hiddenBtn() {
 function showBtn() {
   refs.loadMoreBtn.classList.add('load-more');
   refs.loadMoreBtn.classList.remove('is-hidden');
+}
+
+function initScroll() {
+  const rect = refs.gallery.firstElementChild.getBoundingClientRect();
+  
+    window.scrollBy({
+      top: rect.height * 2.4,
+      behavior: "smooth",
+    });
 }

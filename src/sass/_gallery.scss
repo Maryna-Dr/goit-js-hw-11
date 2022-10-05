@@ -68,7 +68,6 @@ input {
   gap: 10px;
   padding: 15px;
   align-items: baseline;
-  //   border: 1px solid grey;
 }
 
 .photo-card {
@@ -101,10 +100,11 @@ input {
 
 .info {
   display: flex;
+  justify-content: center;
+
   gap: 5px;
   padding: 5px;
 
-  justify-content: center;
   border-right: 1px solid rgb(243, 241, 241);
   border-left: 1px solid rgb(243, 241, 241);
   border-bottom: 1px solid rgba(103, 99, 99, 0.7);
@@ -112,7 +112,7 @@ input {
 }
 
 .info-item {
+    display: block;
   font-size: 12px;
   text-align: center;
-  display: block;
 }
