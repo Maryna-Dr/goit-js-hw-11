@@ -1,12 +1,14 @@
+// ##### all imports
 import axios from 'axios';
+
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
+
 import { PictureApi } from './PictureApi';
 
-// Notify.success('Sol lucet omnibus');
-//Notify.failure('Qui timide rogat docet negare');
-//Notify.warning('Memento te hominem esse');
-//Notify.info('Cogito ergo sum');
-
+// ##### script
 const refs = {
   form: document.querySelector('.search-form'),
   gallery: document.querySelector('.gallery'),
@@ -15,6 +17,7 @@ const refs = {
 
 const pictureApi = new PictureApi();
 
+// ##### eventListener and fn for them 
 refs.form.addEventListener('submit', onFormSubmit);
 refs.loadMoreBtn.addEventListener('click', onLoadMoreBtnClick);
 
@@ -23,26 +26,26 @@ function onFormSubmit(e) {
   query = e.target.elements.searchQuery.value;
 
   pictureApi.currentPage = 1;
-  pictureApi.getPictures(query).then(data => {
-    if (data.hits.length === 0) {
+  pictureApi
+    .getPictures(query)
+    .then(data => {
+      if (data.hits.length === 0) {
+        clearGallery(refs.gallery);
+        hiddenBtn();
+        Notify.failure(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
+        return;
+      }
+
       clearGallery(refs.gallery);
       hiddenBtn();
-      Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
-      return;
-    }
 
-    clearGallery(refs.gallery);
-    hiddenBtn();
-
-    Notify.success(`Hooray! We found ${data.totalHits} images.`);
-    addMarkupToGallery(data.hits);
-  });
-
-  //  .catch (e) {
-  //     e;
-  //   }
+      Notify.success(`Hooray! We found ${data.totalHits} images.`);
+      addMarkupToGallery(data.hits);
+      new SimpleLightbox('.photo-lg');
+    })
+    .catch(e => Notify.failure(e.message));
 }
 
 function onLoadMoreBtnClick() {
@@ -50,21 +53,20 @@ function onLoadMoreBtnClick() {
   pictureApi.getPictures().then(data => {
     addMarkupToGallery(data.hits);
 
-    if (
-      Number(pictureApi.currentPage * pictureApi.perPage) >
-      Number(data.totalHits)
-    ) {
+    if (pictureApi.currentPage * pictureApi.perPage > data.totalHits) {
       hiddenBtn();
       Notify.info("We're sorry, but you've reached the end of search results.");
     }
   });
 }
 
+// ##### fn for create and add markup
 function addMarkupToGallery(obj) {
   const markup = obj
     .map(it => {
       return createMarkup(
         it.webformatURL,
+        it.largeImageURL,
         it.tags,
         it.likes,
         it.views,
@@ -79,11 +81,13 @@ function addMarkupToGallery(obj) {
   return;
 }
 
-function createMarkup(imgSmall, tag, like, view, comment, download) {
+function createMarkup(imgSmall, imgLarge, tag, like, view, comment, download) {
   return `<div class="photo-card">
+  <a class="photo-lg" href="${imgLarge}">
   <div class="thumb">
   <img src="${imgSmall}" alt="${tag}" loading="lazy"/>
       </div>
+      </a>
       <div class="info">
         <p class="info-item">
           <b>Likes</b> ${like}
@@ -101,6 +105,7 @@ function createMarkup(imgSmall, tag, like, view, comment, download) {
     </div>`;
 }
 
+// ##### secondary fn
 function clearGallery(element) {
   while (element.firstChild) {
     element.removeChild(element.firstChild);

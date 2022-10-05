@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const BASE_URL = 'https://pixabay.com/api/';
 
@@ -11,9 +10,7 @@ export class PictureApi {
   async getPictures(query) {
     if (query === '') {
       throw new Error(
-        Notify.failure(
-          'Sorry, there are no images matching your search query. Please try again.'
-        )
+        'Sorry, there are no images matching your search query. Please try again.'
       );
     }
 
@@ -34,9 +31,6 @@ export class PictureApi {
     };
 
     const response = await axios.get(`${BASE_URL}`, config);
-    const data = await response.data;
-    return data;
-
-    // return axios.get(`${BASE_URL}`, config).then(response => response.data);
+    return response.data;
   }
 }
