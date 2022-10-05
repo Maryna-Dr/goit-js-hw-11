@@ -15,9 +15,6 @@ const refs = {
   loadMoreBtn: document.querySelector('.is-hidden'),
 };
 
-
-// console.log(a)
-
 const pictureApi = new PictureApi();
 
 // ##### eventListener and fn for them 
@@ -26,7 +23,7 @@ refs.loadMoreBtn.addEventListener('click', onLoadMoreBtnClick);
 
 function onFormSubmit(e) {
   e.preventDefault();
-  query = e.target.elements.searchQuery.value;
+  const query = e.target.elements.searchQuery.value;
 
   pictureApi.currentPage = 1;
 
